@@ -2,11 +2,14 @@
 
 Guidance for Claude Code (claude.com/claude-code) working in this repository.
 
-## Status: empty repository
+## Status: no application code yet
 
-As of this file's creation, `portfoliooo` contains no application code — this
-CLAUDE.md is the first commit. There is no build system, no dependency
-manifest, no test runner, and no source tree yet.
+`portfoliooo` contains no application code. There is no build system, no
+dependency manifest, no test runner, and no source tree yet.
+
+Product context is captured in [PRODUCT.md](PRODUCT.md) — read it before any
+design or build work. It records confirmed product truth and, just as
+importantly, which facts are deliberately undecided.
 
 **Anything below marked "TBD" must be filled in by whoever adds the first
 code, not guessed at.** A CLAUDE.md that describes commands which do not exist
@@ -29,7 +32,10 @@ is worse than no CLAUDE.md: it sends Claude off running things that fail.
 
 ## Architecture
 
-TBD — no code yet.
+No code yet. The stack is decided: **Next.js + Tailwind CSS**.
+
+A contact form is a confirmed requirement, so the site is not purely static — it
+needs a route handler plus a delivery service, or a third-party form service.
 
 Once a stack is chosen, record here the things that are not obvious from
 reading a single file: how pages/routes are organized, where content (projects,
@@ -53,5 +59,13 @@ Record the real, verified commands once they exist:
 
 ## Deployment
 
-TBD. Not configured. A Vercel connection is available in Claude Code sessions
-for this account, but nothing in this repository is wired to it yet.
+Not configured. A Vercel connector is available in Claude Code sessions for this
+account, but nothing in this repository is wired to it.
+
+## Design workflow
+
+The [impeccable](https://github.com/pbakaus/impeccable) skill is installed at
+`.agents/skills/impeccable/` and symlinked into `.claude/skills/`. Its commands
+(`shape`, `document`, `audit`, `critique`, `polish`, …) are listed in that
+skill's `SKILL.md`. `PRODUCT.md` is its product record; `DESIGN.md` does not
+exist yet and is created by design work, not by init.
