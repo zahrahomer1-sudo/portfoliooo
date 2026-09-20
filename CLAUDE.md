@@ -2,18 +2,18 @@
 
 Guidance for Claude Code (claude.com/claude-code) working in this repository.
 
-## Status: no application code yet
+## Status
 
-`portfoliooo` contains no application code. There is no build system, no
-dependency manifest, no test runner, and no source tree yet.
+A personal portfolio site for Zahrah, built with Next.js and Tailwind.
 
-Product context is captured in [PRODUCT.md](PRODUCT.md) — read it before any
-design or build work. It records confirmed product truth and, just as
-importantly, which facts are deliberately undecided.
+Read [PRODUCT.md](PRODUCT.md) before any design or build work — it records
+confirmed product truth and, just as importantly, which facts are deliberately
+undecided. [DESIGN.md](DESIGN.md) records the visual system.
 
-**Anything below marked "TBD" must be filled in by whoever adds the first
-code, not guessed at.** A CLAUDE.md that describes commands which do not exist
-is worse than no CLAUDE.md: it sends Claude off running things that fail.
+**No real media or case-study content exists yet.** Every project entry in
+`src/content/site.ts` is a labelled placeholder and every media slot renders an
+"awaiting asset" state. Do not invent clients, testimonials, metrics or project
+outcomes to fill them.
 
 ## Repository
 
@@ -32,35 +32,54 @@ is worse than no CLAUDE.md: it sends Claude off running things that fail.
 
 ## Architecture
 
-No code yet. The stack is decided: **Next.js + Tailwind CSS**.
+Next.js 16 (App Router) + React 19 + Tailwind CSS v4. Motion for animation,
+Lenis for scroll feel. One route: `/`, plus `POST /api/contact`.
 
-A contact form is a confirmed requirement, so the site is not purely static — it
-needs a route handler plus a delivery service, or a third-party form service.
+Things that are not obvious from a single file:
 
-Once a stack is chosen, record here the things that are not obvious from
-reading a single file: how pages/routes are organized, where content (projects,
-bio, images) lives and in what format, how styling is structured, and anything
-that spans more than one directory.
+- **All copy and content lives in `src/content/site.ts`.** Components import
+  from it and never hardcode strings. Editing the site's words, projects,
+  services or contact questions means editing that one file.
+- **Media existence is resolved on the server**, in `src/lib/media.ts`, and
+  passed down as boolean props. It is deliberately not inferred from a browser
+  `error` event: a lazy image below the fold never requests anything, so it
+  never errors, and the placeholder would silently never appear. Drop a real
+  file at the path in `site.ts` and the placeholder disappears on next build.
+- **`Reveal` (`src/components/primitives/Reveal.tsx`) is the only entrance
+  animation.** One curve, one distance, varied by delay. Its start state is
+  server-rendered as `opacity:0`, so `layout.tsx` ships a `<noscript>` override
+  — without it the page would be present but invisible to a no-JS client.
+- **Design tokens are CSS custom properties** in the `@theme` block of
+  `src/app/globals.css`, consumed as Tailwind utilities (`text-cherry`,
+  `bg-ink`). Browser surfaces — selection, caret, focus ring — are themed there
+  too.
+- **The contact form never submits until the review step.** `/api/contact`
+  answers `501` when no delivery provider is configured, and the client turns
+  that into a prefilled mailto rather than faking success. See `.env.example`.
 
 ## Commands
 
-TBD — no build tooling yet.
-
-Record the real, verified commands once they exist:
-
 | Task | Command |
 | --- | --- |
-| Install dependencies | TBD |
-| Run dev server | TBD |
-| Build for production | TBD |
-| Lint | TBD |
-| Typecheck | TBD |
-| Run tests | TBD |
+| Install dependencies | `npm install` |
+| Run dev server | `npm run dev` |
+| Build for production | `npm run build` |
+| Serve the build | `npm run start` |
+| Lint | `npm run lint` |
+| Typecheck | `npm run typecheck` |
+| Run tests | None yet |
+
+Run `npm run build`, `npm run lint` and `npm run typecheck` before pushing;
+all three pass on the current tree.
 
 ## Deployment
 
-Not configured. A Vercel connector is available in Claude Code sessions for this
-account, but nothing in this repository is wired to it.
+Not yet wired up. The app builds and serves with `npm run build && npm run start`.
+A Vercel connector is available in Claude Code sessions for this account.
+
+Before launch: set the real domain in `site.url` (`src/content/site.ts`) — it
+drives canonical URLs, Open Graph tags, `sitemap.xml` and `robots.txt` — and
+configure contact delivery per `.env.example`.
 
 ## Design workflow
 
