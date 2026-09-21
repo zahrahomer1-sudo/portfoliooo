@@ -1,15 +1,25 @@
+import CinematicBackdrop from "@/components/CinematicBackdrop";
 import Preloader from "@/components/Preloader";
-import Nav from "@/components/Nav";
+import FloatingNav from "@/components/FloatingNav";
+import Cursor from "@/components/Cursor";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
+import Album from "@/components/Album";
 import Work from "@/components/Work";
 import Services from "@/components/Services";
 import Studio from "@/components/Studio";
 import Process from "@/components/Process";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import { hero, projects, site } from "@/content/site";
+import { album, hero, projects, site } from "@/content/site";
 import { mediaExists } from "@/lib/media";
+
+const navItems = [
+  { name: "Album", link: "#album" },
+  { name: "Work", link: "#work" },
+  { name: "Services", link: "#services" },
+  { name: "Studio", link: "#studio" },
+];
 
 export default function Home() {
   const available: Record<string, boolean> = {};
@@ -21,17 +31,28 @@ export default function Home() {
   return (
     <>
       <Preloader />
-      <Nav />
+      <FloatingNav items={navItems} />
+      <Cursor />
+
       <main id="main">
-        <Hero hasVideo={mediaExists(hero.video)} hasPoster={mediaExists(hero.poster)} />
-        <About />
+        <CinematicBackdrop
+          hasVideo={mediaExists(hero.video) || mediaExists(hero.videoMp4)}
+          hasPoster={mediaExists(hero.poster)}
+        >
+          <Hero />
+          <About />
+        </CinematicBackdrop>
+
+        <Album />
         <Work available={available} />
         <Services />
         <Studio />
         <Process />
         <Contact />
       </main>
+
       <Footer />
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -42,6 +63,14 @@ export default function Home() {
             jobTitle: site.role,
             url: site.url,
             email: site.email,
+            knowsAbout: [
+              "Photography",
+              "Videography",
+              "Brand and graphic design",
+              "Web design and development",
+              "Creative direction",
+            ],
+            mainEntityOfPage: { "@type": "WebPage", name: album.title },
           }),
         }}
       />

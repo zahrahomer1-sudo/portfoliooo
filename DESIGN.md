@@ -1,66 +1,109 @@
 # Design
 
-The visual world for Zahrah's portfolio. Derived from the written brief —
-premium, editorial, artistic, cinematic — not from a reference site. The
-reference link supplied (`photographers.framer.website`) could not be reached
-from the build environment and the two promised uploads had not arrived, so
-nothing here is interpreted from them.
+The visual world for Zahrah's portfolio: Apple-adjacent glass over a cinematic
+dark ground, with editorial typography and red used as light rather than paint.
+
+The supplied reference (`photographers.framer.website`) is blocked by this
+environment's egress, so nothing here is derived from browsing it. It is built
+from the written brief plus the single screenshot supplied — full-bleed footage,
+enormous wide-grotesque display type reading through the image, minimal chrome.
+
+## Ground
+
+Near-black `#0a0908`, never `#000`: pure black flattens the glass edges and
+kills the inset highlight that makes a panel look like a panel.
+
+Hero and About sit on a fixed film layer. It crossfades to the ground across the
+back half of that wrapper, so there is no seam where one background ends and the
+next begins. Everything from the album down is on the dark ground.
 
 ## Palette
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `ink` | `#0b0a0a` | Type, and the one dark section |
-| `paper` | `#faf8f5` | Ground. Warm, so the red reads as ink rather than alert |
-| `cherry` | `#c8102e` | Accent. One use per viewport, never a fill |
-| `wine` | `#7a1028` | Reserved for depth |
-| `burgundy` | `#3d0c18` | Cinematic ground behind film |
-| `ink-80/55/30/12` | — | Secondary type and rules, tinted from ink, never grey |
+| `ink` | `#0a0908` | Ground |
+| `ink-raised` | `#121011` | Media wells, raised surfaces |
+| `paper` | `#f2efec` | Type. Warm, so it does not glare |
+| `cherry` | `#c8102e` | Fills, large type, light. **Not small text** |
+| `cherry-soft` | `#e8506a` | The only red that clears 4.5:1 on the ground |
+| `wine` | `#7a1028` | Hover states, depth |
+| `burgundy` | `#3d0c18` | Shadow tint, atmosphere |
 
-Red is punctuation. It lands on the last line of the hero, the live word in the
-preloader, the progress bar, the process numerals and hover states. If a
-viewport has two red things competing, one of them is wrong.
+Red is light falling on the scene, not a colour applied to it. One red thing per
+viewport. `cherry` fails contrast for body-sized text — that is what
+`cherry-soft` exists for, and the distinction is not optional.
+
+## Glass
+
+Four properties, all four required:
+
+```css
+background: rgb(255 255 255 / 0.055);
+border: 1px solid rgb(255 255 255 / 0.12);
+box-shadow:
+  inset 0 1px 0 0 rgb(255 255 255 / 0.2),    /* top rim catches light */
+  inset 0 -1px 0 0 rgb(0 0 0 / 0.3),         /* bottom rim falls away */
+  0 24px 48px -28px rgb(61 12 24 / 0.75);    /* burgundy, never black */
+backdrop-filter: blur(18px) saturate(155%);
+```
+
+The saturation lift is what stops the blur greying out whatever is behind it.
+Without `backdrop-filter` support the panels go opaque rather than transparent —
+an unreadable panel is worse than an un-glassy one.
+
+`.glass` for surfaces over the film, `.glass-strong` for the album dialog.
+
+## Shape
+
+**Rounded CTAs, sharp everything else.** Buttons and the floating nav are fully
+round; cards, panels, dialogs and images have square corners. This is the rule
+that keeps it from looking like every other glass template.
 
 ## Type
 
-Instrument Serif for display, Inter Tight for everything else.
+Archivo for display — a grotesque with a real width axis, set at 112% so the
+headline stretches rather than merely thickening. Inter Tight for everything
+else. Display sits at `line-height: 0.88`, `letter-spacing: -0.035em`.
 
-- Display: `line-height: 0.92`, `letter-spacing: -0.03em`, clamped so it never
-  exceeds roughly 7rem. Past that it stops being typography and becomes texture.
-- Body: 17px baseline, `measure` caps line length at 62ch.
-- `label`: 11px, `0.16em` tracking, uppercase. Navigation, metadata, buttons.
+The hero headline uses `mix-blend-mode: difference` so it inverts against the
+film: dark over highlights, light over shadow, legible through a moving frame
+without a scrim. **No ancestor of that heading may carry a transform, filter or
+opacity** — any of those opens a new stacking context and the text blends
+against that instead of against the film. The entrance animates inner spans for
+exactly this reason.
 
-The serif/grotesque pairing is the whole identity. No third face.
+## Album
 
-## Layout
+One scrolling visual story, not a gallery. Frames sit in a loose three-column
+rhythm and travel at different speeds (`depth` per frame, 1 = moves with the
+page). A shallow pointer tilt — 3 degrees maximum — suggests the surface has
+depth; anything more distorts the photograph, which is the thing being sold.
 
-Twelve columns, `clamp(1.25rem, 5vw, 5rem)` gutters, 96rem maximum.
-
-Sections are separated by a 1px rule and generous vertical space, not by
-alternating background bands. Exactly one section — Studio — inverts to ink,
-marking the shift from showing work to explaining the practice.
-
-Work is an asymmetric editorial grid: spans and vertical offsets vary per item
-so the eye travels. It is deliberately not a card grid, and there are no cards
-anywhere on the page.
+Clicking a frame opens a dialog with its story and a prefilled WhatsApp print
+enquiry. The custom cursor exists only inside this section, where it is the
+affordance saying a frame will open; the rest of the site keeps the pointer
+people already know.
 
 ## Motion
 
-One authored entrance (`Reveal`): 28px rise, `cubic-bezier(0.16, 1, 0.3, 1)`,
-1.1s, varied only by delay. Lenis smooths the scroll. The hero film has a slight
-parallax. Everything else is a state change, not an animation.
+Lenis for scroll inertia. One authored entrance, `cubic-bezier(0.16, 1, 0.3, 1)`,
+varied by delay. Scroll-linked: the film's fade and scale, the album parallax.
+Spring physics only on the frame tilt.
 
-All of it is off under `prefers-reduced-motion`, including Lenis — hijacking
-someone's scrollbar is the effect most likely to make them ill.
+All of it off under `prefers-reduced-motion`, including Lenis and including the
+film's drift — and under reduced motion the film is contained to its wrapper
+rather than fixed, because a backdrop that never fades would otherwise sit
+behind every section on the site.
 
 ## Refusals
 
-No cards, no gradients, no rounded boxes, no glass, no eyebrow labels above
-headings, no drop shadows, no emoji standing in for icons. Section numbers
-appear once, in Process, where the sequence genuinely is the content.
+No cards, no gradients as decoration, no rounded panels, no eyebrow labels, no
+emoji icons, no pure black, no `cherry` on small text. Section numbering appears
+twice — Process and album frame indices — in both cases because the sequence is
+the content.
 
 ## Open
 
-The presentation model for case studies — detail pages or in-page — is
-undecided in PRODUCT.md, so work items present in place and navigate nowhere.
-Resolve that before adding routes.
+Album presentation is a homepage section plus a per-frame dialog. Whether albums
+also deserve their own routes (better for sharing and search) is unresolved, as
+is print pricing.

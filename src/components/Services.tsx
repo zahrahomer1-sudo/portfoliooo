@@ -21,13 +21,13 @@ export default function Services() {
 
       <ul className="m-0 list-none p-0">
         {services.map((service, i) => (
-          <li key={service.title} className="border-t border-ink-12">
+          <li key={service.title} className="border-t border-paper-12">
             <Reveal delay={i * 0.04}>
               <div className="grid grid-cols-12 gap-x-6 gap-y-3 py-8 sm:py-11">
                 <h3 className="display col-span-12 text-[clamp(1.75rem,4vw,3rem)] sm:col-span-6">
                   {service.title}
                 </h3>
-                <p className="measure col-span-12 self-center text-[1rem] leading-relaxed text-ink-55 sm:col-span-5 sm:col-start-8">
+                <p className="measure col-span-12 self-center text-[1rem] leading-relaxed text-paper-45 sm:col-span-5 sm:col-start-8">
                   {service.body}
                 </p>
               </div>

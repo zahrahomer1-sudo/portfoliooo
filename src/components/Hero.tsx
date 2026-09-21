@@ -1,98 +1,71 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { hero, site } from "@/content/site";
 
 /**
- * The video is a composed block, not wallpaper. It holds the right-hand
- * columns and bleeds off the viewport edge; type never sits on top of it, so
- * legibility never depends on what frame happens to be playing.
+ * The headline blends with the film behind it rather than sitting on a plate:
+ * `mix-blend-mode: difference` inverts it against whatever is underneath, so it
+ * goes dark over highlights and light over shadow and stays legible through a
+ * moving frame. No ancestor may carry a transform, filter or opacity — any of
+ * those would open a new stacking context and the text would blend against that
+ * instead of against the film. The entrance animates inner spans for exactly
+ * that reason.
  */
-export default function Hero({
-  hasVideo,
-  hasPoster,
-}: {
-  hasVideo: boolean;
-  hasPoster: boolean;
-}) {
+export default function Hero() {
   const reduced = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  const [videoFailed, setVideoFailed] = useState(!hasVideo);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const mediaY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
 
   return (
     <section
       id="top"
-      ref={ref}
-      className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pb-10 pt-28 sm:pb-14"
+      className="relative flex min-h-[100svh] flex-col justify-between pb-8 pt-28 sm:pb-12"
     >
-      <div className="shell grid w-full grid-cols-12 items-end gap-y-10">
-        <div className="col-span-12 lg:col-span-6 xl:col-span-5">
-          <h1 className="display text-[clamp(3rem,11vw,7rem)] text-ink">
-            {hero.headline.map((line, i) => (
-              <span key={line} className="block overflow-hidden">
-                <motion.span
-                  className="block"
-                  initial={reduced ? undefined : { y: "105%" }}
-                  animate={reduced ? undefined : { y: "0%" }}
-                  transition={{
-                    duration: 1.15,
-                    delay: 0.15 + i * 0.09,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                >
-                  {i === hero.headline.length - 1 ? (
-                    <em className="not-italic text-cherry">{line}</em>
-                  ) : (
-                    line
-                  )}
-                </motion.span>
-              </span>
-            ))}
-          </h1>
-
-          <p className="measure mt-8 text-[1.0625rem] leading-relaxed text-ink-55">
-            {hero.caption}
-          </p>
-        </div>
-
-        <div className="col-span-12 lg:col-span-6 xl:col-span-7">
-          <motion.div
-            style={reduced ? undefined : { y: mediaY }}
-            className="relative aspect-[4/5] w-full overflow-hidden bg-burgundy sm:aspect-[16/10] lg:aspect-auto lg:h-[68svh] lg:-mr-[clamp(1.25rem,5vw,5rem)] lg:w-[calc(100%+clamp(1.25rem,5vw,5rem))]"
-          >
-            {!videoFailed ? (
-              <video
-                src={hero.video}
-                poster={hasPoster ? hero.poster : undefined}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                aria-label={`Showreel of ${site.name} at work`}
-                onError={() => setVideoFailed(true)}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-end justify-between gap-4 p-5 text-paper/80 sm:p-7">
-                <span className="label">Hero film — 16:9</span>
-                <span className="label">public/media/hero.mp4</span>
-              </div>
-            )}
-          </motion.div>
-        </div>
+      <div className="shell flex justify-end pt-6 sm:pt-12">
+        <motion.p
+          className="glass measure max-w-[34ch] p-5 text-[0.9375rem] leading-relaxed text-paper-70 sm:p-6 sm:text-base"
+          initial={reduced ? undefined : { opacity: 0, y: 18 }}
+          animate={reduced ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {hero.intro}
+        </motion.p>
       </div>
 
-      <div className="shell mt-12 flex items-center justify-between">
-        <span className="label text-ink-30">Scroll</span>
-        <span className="label text-ink-30">{site.role}</span>
+      <div className="shell">
+        <h1 className="display mix-blend-difference text-[clamp(2.75rem,10.5vw,9rem)] text-white">
+          {hero.headline.map((line, i) => (
+            <span key={line} className="block overflow-hidden pb-[0.06em]">
+              <motion.span
+                className="block"
+                initial={reduced ? undefined : { y: "105%" }}
+                animate={reduced ? undefined : { y: "0%" }}
+                transition={{
+                  duration: 1.25,
+                  delay: 0.2 + i * 0.1,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              >
+                {line}
+              </motion.span>
+            </span>
+          ))}
+        </h1>
+
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-y-4 border-t border-paper-12 pt-5">
+          <span className="label text-paper-45">{site.role}</span>
+          <a
+            href="#album"
+            className="label group flex items-center gap-2 text-paper-70 no-underline"
+          >
+            {hero.scrollCue}
+            <span
+              aria-hidden="true"
+              className="inline-block transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:translate-y-1"
+            >
+              ↓
+            </span>
+          </a>
+        </div>
       </div>
     </section>
   );

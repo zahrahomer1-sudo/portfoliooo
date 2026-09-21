@@ -51,12 +51,20 @@ export default function Work({
   );
 }
 
-/** Column placement per scale. Offsets create the asymmetry without randomness. */
-const placement: Record<NonNullable<Project["scale"]>, string> = {
-  wide: "col-span-12",
-  tall: "col-span-12 sm:col-span-7 sm:col-start-1",
-  standard: "col-span-12 sm:col-span-5 sm:col-start-8",
-};
+/**
+ * Column placement per scale. Offsets create the asymmetry without randomness.
+ *
+ * Standard items alternate sides rather than always sitting right: on a dark
+ * ground a repeatedly empty left half stops reading as composition and starts
+ * reading as a layout that failed to fill.
+ */
+function placement(scale: NonNullable<Project["scale"]>, index: number) {
+  if (scale === "wide") return "col-span-12";
+  if (scale === "tall") return "col-span-12 sm:col-span-7 sm:col-start-1";
+  return index % 2 === 0
+    ? "col-span-12 sm:col-span-6 sm:col-start-1"
+    : "col-span-12 sm:col-span-6 sm:col-start-7";
+}
 
 const ratios: Record<NonNullable<Project["scale"]>, string> = {
   wide: "16 / 9",
@@ -78,10 +86,10 @@ function WorkItem({
   available: Record<string, boolean>;
 }) {
   const scale = project.scale ?? "standard";
-  const offset = scale === "standard" && index % 2 === 1 ? "sm:mt-24" : "";
+  const offset = scale === "standard" && index % 2 === 1 ? "sm:mt-28" : "";
 
   return (
-    <li className={`${placement[scale]} ${offset}`}>
+    <li className={`${placement(scale, index)} ${offset}`}>
       <Reveal>
         <figure
           className="group m-0"
@@ -106,10 +114,10 @@ function WorkItem({
             <h3 className="display text-[clamp(1.5rem,3vw,2.25rem)]">
               {project.title}
             </h3>
-            <span className="label text-ink-55">
+            <span className="label text-paper-45">
               {project.discipline} · {project.year}
             </span>
-            <p className="measure basis-full text-[0.9375rem] leading-relaxed text-ink-55">
+            <p className="measure basis-full text-[0.9375rem] leading-relaxed text-paper-45">
               {project.summary}
             </p>
           </figcaption>

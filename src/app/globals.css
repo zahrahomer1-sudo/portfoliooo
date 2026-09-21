@@ -1,24 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0b0a0a;
-  --color-ink-80: #2a2626;
-  --color-ink-55: #5d5656;
-  --color-ink-30: #a39b9b;
-  --color-ink-12: #ddd6d2;
+  /* Ground. Warm near-black, never #000 — pure black kills the glass edges. */
+  --color-ink: #0a0908;
+  --color-ink-raised: #121011;
+  --color-ink-deep: #050405;
 
-  --color-paper: #faf8f5;
-  --color-paper-dim: #efeae4;
+  --color-paper: #f2efec;
+  --color-paper-70: rgb(242 239 236 / 0.7);
+  --color-paper-45: rgb(242 239 236 / 0.45);
+  --color-paper-25: rgb(242 239 236 / 0.25);
+  --color-paper-12: rgb(242 239 236 / 0.12);
 
+  /* Cherry is for large type, fills and light. cherry-soft is the only one
+     that clears 4.5:1 on the dark ground, so small text uses it. */
   --color-cherry: #c8102e;
+  --color-cherry-soft: #e8506a;
   --color-wine: #7a1028;
   --color-burgundy: #3d0c18;
 
-  --font-display: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* One scale, so nothing invents a z-index of 9999. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-nav: 40;
+  --z-cursor: 60;
+  --z-overlay: 70;
+  --z-intro: 90;
 }
 
 @layer base {
@@ -31,17 +44,17 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    background: var(--color-ink);
   }
 
-  /* Lenis drives scrolling; native smooth would fight it. */
   html.lenis {
     scroll-behavior: auto;
   }
 
   body {
     margin: 0;
-    background: var(--color-paper);
-    color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-paper);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
@@ -49,20 +62,19 @@
     overflow-x: clip;
   }
 
-  /* Browser surfaces belong to the palette, not to the browser. */
   ::selection {
     background: var(--color-cherry);
     color: var(--color-paper);
   }
 
   :where(input, textarea) {
-    caret-color: var(--color-cherry);
+    caret-color: var(--color-cherry-soft);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-cherry);
+    outline: 2px solid var(--color-cherry-soft);
     outline-offset: 3px;
-    border-radius: 1px;
+    border-radius: 2px;
   }
 
   a {
@@ -76,6 +88,24 @@
     display: block;
     max-width: 100%;
     height: auto;
+  }
+
+  /* Scrollbar belongs to the palette too. */
+  @supports selector(::-webkit-scrollbar) {
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-ink-deep);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a2427;
+      border: 3px solid var(--color-ink-deep);
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-wine);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -101,28 +131,71 @@
     max-width: 96rem;
   }
 
-  .rule {
-    border-top: 1px solid var(--color-ink-12);
+  .measure {
+    max-width: 62ch;
   }
 
-  /* Editorial display scale. Ceiling is deliberate: past this it stops being
-     typography and becomes texture. */
   .display {
     font-family: var(--font-display);
-    font-weight: 400;
-    line-height: 0.92;
-    letter-spacing: -0.03em;
+    font-weight: 500;
+    line-height: 0.88;
+    letter-spacing: -0.035em;
+    font-stretch: 112%;
+    text-wrap: balance;
   }
 
   .label {
     font-size: 0.6875rem;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     font-weight: 500;
   }
 
-  .measure {
-    max-width: 62ch;
+  .nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /**
+   * Glass.
+   *
+   * Four things separate believable glass from a blur filter: the blur itself,
+   * a saturation lift so colour bleeds through rather than greying out, a light
+   * top edge and dark bottom edge simulating refraction at the panel rim, and a
+   * shadow tinted with burgundy instead of black. All four, or it looks cheap.
+   */
+  .glass {
+    background: rgb(255 255 255 / 0.055);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.2),
+      inset 0 -1px 0 0 rgb(0 0 0 / 0.3),
+      0 24px 48px -28px rgb(61 12 24 / 0.75);
+    backdrop-filter: blur(18px) saturate(155%);
+    -webkit-backdrop-filter: blur(18px) saturate(155%);
+  }
+
+  .glass-strong {
+    background: rgb(12 10 11 / 0.72);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.22),
+      0 40px 80px -40px rgb(0 0 0 / 0.9);
+    backdrop-filter: blur(32px) saturate(150%);
+    -webkit-backdrop-filter: blur(32px) saturate(150%);
+  }
+
+  /* Where backdrop-filter is unavailable, commit to opacity rather than
+     shipping a transparent panel with unreadable text behind it. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass,
+    .glass-strong {
+      background: rgb(18 16 17 / 0.94);
+    }
+  }
+
+  /* Rounded CTAs, sharp everything else. */
+  .cta {
+    border-radius: 999px;
   }
 
   .grain::after {
@@ -130,13 +203,26 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.55;
-    mix-blend-mode: multiply;
+    opacity: 0.28;
     background-image: radial-gradient(
       circle at 1px 1px,
-      rgb(11 10 10 / 0.16) 1px,
+      rgb(242 239 236 / 0.14) 1px,
       transparent 0
     );
     background-size: 3px 3px;
+  }
+
+  /* Hides the native cursor once the custom one is running. */
+  .cursor-none-fine {
+    cursor: none;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: scale(1.06) translate3d(-1.5%, -1%, 0);
+  }
+  to {
+    transform: scale(1.14) translate3d(1.5%, 1.5%, 0);
   }
 }

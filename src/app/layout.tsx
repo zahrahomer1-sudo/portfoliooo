@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Inter_Tight } from "next/font/google";
+import { Archivo, Inter_Tight } from "next/font/google";
 import { site } from "@/content/site";
 import SmoothScroll from "@/components/SmoothScroll";
 import "./globals.css";
 
-const instrument = Instrument_Serif({
+/** Wide grotesque for display. The width axis is the point — it lets the
+ *  headline stretch without simply getting heavier. */
+const archivo = Archivo({
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+  axes: ["wdth"],
   display: "swap",
-  variable: "--font-instrument",
+  variable: "--font-archivo",
 });
 
 const interTight = Inter_Tight({
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description:
-    "Independent creative direction across photography, film, brand identity and web. Selected work and contact.",
+    "Independent creative direction across photography, film, brand identity and web. Selected work, albums and prints.",
   openGraph: {
     type: "website",
     title: `${site.name} — ${site.role}`,
@@ -33,21 +34,22 @@ export const metadata: Metadata = {
       "Independent creative direction across photography, film, brand identity and web.",
     siteName: site.name,
     url: site.url,
+    images: [{ url: "/media/hero-poster.png", width: 1280, height: 720 }],
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#faf8f5",
-  colorScheme: "light",
+  themeColor: "#0a0908",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${instrument.variable} ${interTight.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${interTight.variable}`}>
       <head>
         {/* Reveal animations render their start state into the server HTML.
             Without JS that state never advances, so the page would be there
@@ -59,7 +61,7 @@ export default function RootLayout({
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[90] focus:bg-paper focus:px-4 focus:py-2 focus:text-ink"
         >
           Skip to content
         </a>

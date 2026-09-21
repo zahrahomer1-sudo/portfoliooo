@@ -19,9 +19,13 @@ Primary: recruiters and hiring managers, deciding whether the owner is a fit for
 a role. They arrive with limited time and a comparison set, want evidence of
 capability, and need a way to make contact.
 
-No secondary audience is confirmed. Prospective freelance clients, academic
-reviewers, and peers were each offered during init and not selected. Do not
-design for them without asking.
+Confirmed second audience: **print buyers.** Adding a buy-print call to action
+to the album means the site now sells to people who want a photograph on their
+wall, not only to people deciding whether to hire. These two want different
+things from the same page and the balance between them is not yet settled —
+raise it before letting either one take over the layout.
+
+Academic reviewers and peers were offered during init and not selected.
 
 ## Product Purpose
 
@@ -52,6 +56,11 @@ Confirmed:
   purely static.
 - Media includes photography and video, so asset weight and loading strategy are
   real constraints on the recruiter's first pass, not polish concerns.
+- Print sales via WhatsApp enquiry. Each album frame opens a dialog with a
+  prefilled message to +92 300 277 3339. No cart, no payment, no stock: the
+  transaction happens in the conversation.
+- Discipline confirmed as photography, videography, UX design, and graphic and
+  brand design — a wider span than a single-discipline portfolio.
 
 Explicitly undecided — do not resolve without asking:
 
@@ -61,6 +70,10 @@ Explicitly undecided — do not resolve without asking:
 - Owner's name, domain, and existing profile links.
 - Downloadable CV. Offered during init and not selected.
 - Contact form delivery mechanism and spam handling.
+- Print pricing, sizes, editions and shipping. Every album frame currently says
+  "print details to be confirmed" because none of it has been established.
+- Enquiry budget bands are written in £. With a Pakistan number on the site this
+  may well be wrong; confirm the currency clients actually quote in.
 
 ## Evidence on Hand
 

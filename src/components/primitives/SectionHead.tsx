@@ -18,14 +18,14 @@ export default function SectionHead({
       <Reveal>
         <h2
           id={id}
-          className="display text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
+          className="display text-[clamp(2.5rem,7vw,5.5rem)] text-paper"
         >
           {title}
         </h2>
       </Reveal>
       {lead ? (
         <Reveal delay={0.08}>
-          <p className="measure mt-6 text-[1.0625rem] leading-relaxed text-ink-55 sm:text-lg">
+          <p className="measure mt-6 text-[1.0625rem] leading-relaxed text-paper-45 sm:text-lg">
             {lead}
           </p>
         </Reveal>

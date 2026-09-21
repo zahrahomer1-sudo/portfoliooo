@@ -121,7 +121,7 @@ export default function Contact() {
       </h2>
 
       <div className="mt-14 grid grid-cols-12 gap-x-6">
-        <div className="col-span-12 lg:col-span-8">
+        <div className="glass col-span-12 p-6 sm:p-10 lg:col-span-9">
           {status === "sent" ? (
             <Resolved
               title="That is with me."
@@ -136,11 +136,11 @@ export default function Contact() {
           ) : (
             <>
               <div className="mb-8 flex items-center gap-4">
-                <span className="label text-ink-30" aria-hidden="true">
+                <span className="label text-paper-25" aria-hidden="true">
                   {String(Math.min(index + 1, total)).padStart(2, "0")} / {total}
                 </span>
                 <div
-                  className="h-px flex-1 bg-ink-12"
+                  className="h-px flex-1 bg-ink-raised-12"
                   role="progressbar"
                   aria-valuemin={1}
                   aria-valuemax={total}
@@ -198,7 +198,7 @@ export default function Contact() {
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 {index > 0 || reviewing ? (
-                  <button type="button" onClick={back} className="label cursor-pointer border-0 bg-transparent p-0 text-ink-55 underline underline-offset-4">
+                  <button type="button" onClick={back} className="label cursor-pointer border-0 bg-transparent p-0 text-paper-45 underline underline-offset-4">
                     Back
                   </button>
                 ) : null}
@@ -207,7 +207,7 @@ export default function Contact() {
                   type="button"
                   onClick={reviewing ? submit : advance}
                   disabled={status === "sending"}
-                  className="cursor-pointer border-0 bg-ink px-7 py-4 text-paper transition-colors duration-300 hover:bg-cherry disabled:cursor-wait disabled:opacity-60"
+                  className="cta cursor-pointer border-0 bg-cherry px-8 py-4 text-white transition-colors duration-300 hover:bg-wine disabled:cursor-wait disabled:opacity-60"
                 >
                   <span className="label">
                     {reviewing
@@ -221,13 +221,13 @@ export default function Contact() {
                 </button>
 
                 {!reviewing && step.optional ? (
-                  <button type="button" onClick={advance} className="label cursor-pointer border-0 bg-transparent p-0 text-ink-30 underline underline-offset-4">
+                  <button type="button" onClick={advance} className="label cursor-pointer border-0 bg-transparent p-0 text-paper-25 underline underline-offset-4">
                     Skip
                   </button>
                 ) : null}
 
                 {status === "error" ? (
-                  <p role="alert" className="basis-full text-[0.9375rem] text-cherry">
+                  <p role="alert" className="basis-full text-[0.9375rem] text-cherry-soft">
                     That did not send. Try again, or email{" "}
                     <a href={mailto}>{site.email}</a> directly.
                   </p>
@@ -281,7 +281,7 @@ function Question({
       </label>
 
       {step.hint ? (
-        <p id={hintId} className="mt-3 text-[0.9375rem] text-ink-30">
+        <p id={hintId} className="mt-3 text-[0.9375rem] text-paper-25">
           {step.hint}
         </p>
       ) : null}
@@ -303,13 +303,13 @@ function Question({
                   aria-pressed={selected}
                   onClick={() => onChange(option)}
                   onDoubleClick={onAdvance}
-                  className={`cursor-pointer border px-5 py-3 text-[0.9375rem] transition-colors duration-200 ${
+                  className={`cta cursor-pointer border px-5 py-3 text-[0.9375rem] transition-colors duration-200 ${
                     selected
-                      ? "border-ink bg-ink text-paper"
-                      : "border-ink-12 bg-transparent text-ink-80 hover:border-ink"
+                      ? "border-paper bg-paper text-ink"
+                      : "border-paper-12 bg-transparent text-paper-70 hover:border-paper-45"
                   }`}
                 >
-                  <span className="mr-2 text-ink-30">{i + 1}</span>
+                  <span className="mr-2 text-paper-25">{i + 1}</span>
                   {option}
                 </button>
               );
@@ -327,7 +327,7 @@ function Question({
             onKeyDown={(e) => {
               if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) onAdvance();
             }}
-            className="w-full resize-none border-0 border-b border-ink-12 bg-transparent pb-3 text-[1.25rem] leading-relaxed outline-none transition-colors focus:border-cherry"
+            className="w-full resize-none border-0 border-b border-paper-12 bg-transparent pb-3 text-[1.25rem] leading-relaxed outline-none transition-colors focus:border-cherry"
             placeholder="Type here"
           />
         ) : (
@@ -347,19 +347,19 @@ function Question({
                 onAdvance();
               }
             }}
-            className="w-full border-0 border-b border-ink-12 bg-transparent pb-3 text-[clamp(1.25rem,3vw,1.75rem)] outline-none transition-colors focus:border-cherry"
+            className="w-full border-0 border-b border-paper-12 bg-transparent pb-3 text-[clamp(1.25rem,3vw,1.75rem)] outline-none transition-colors focus:border-cherry"
             placeholder="Type here"
           />
         )}
       </div>
 
       {error ? (
-        <p id={errorId} role="alert" className="mt-4 text-[0.9375rem] text-cherry">
+        <p id={errorId} role="alert" className="mt-4 text-[0.9375rem] text-cherry-soft">
           {error}
         </p>
       ) : null}
 
-      <p className="mt-6 text-[0.8125rem] text-ink-30">
+      <p className="mt-6 text-[0.8125rem] text-paper-25">
         {step.type === "longtext"
           ? "⌘ + Enter to continue"
           : step.type === "choice"
@@ -384,16 +384,16 @@ function Review({
       </h3>
       <dl className="mt-8 m-0">
         {contactSteps.map((s, i) => (
-          <div key={s.id} className="border-t border-ink-12 py-4">
-            <dt className="label text-ink-30">{s.question}</dt>
+          <div key={s.id} className="border-t border-paper-12 py-4">
+            <dt className="label text-paper-25">{s.question}</dt>
             <dd className="m-0 mt-2 flex items-baseline justify-between gap-6">
-              <span className="text-[1rem] leading-relaxed text-ink-80">
+              <span className="text-[1rem] leading-relaxed text-paper-70">
                 {answers[s.id]?.trim() || "—"}
               </span>
               <button
                 type="button"
                 onClick={() => onEdit(i)}
-                className="label shrink-0 cursor-pointer border-0 bg-transparent p-0 text-ink-55 underline underline-offset-4"
+                className="label shrink-0 cursor-pointer border-0 bg-transparent p-0 text-paper-45 underline underline-offset-4"
               >
                 Edit
               </button>
@@ -417,13 +417,13 @@ function Resolved({
   return (
     <div>
       <p className="display text-[clamp(1.75rem,4.5vw,3.25rem)]">{title}</p>
-      <p className="measure mt-5 text-[1.0625rem] leading-relaxed text-ink-55">
+      <p className="measure mt-5 text-[1.0625rem] leading-relaxed text-paper-45">
         {body}
       </p>
       {action ? (
         <a
           href={action.href}
-          className="mt-8 inline-block bg-ink px-7 py-4 text-paper no-underline transition-colors duration-300 hover:bg-cherry"
+          className="cta mt-8 inline-block bg-cherry px-8 py-4 text-white no-underline transition-colors duration-300 hover:bg-wine"
         >
           <span className="label">{action.label}</span>
         </a>
