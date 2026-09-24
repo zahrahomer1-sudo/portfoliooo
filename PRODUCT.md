@@ -78,6 +78,9 @@ Explicitly undecided — do not resolve without asking:
 
 ## Evidence on Hand
 
+Real hero footage exists and is committed at `public/media/hero.mp4` (H.264 +
+AAC, 1.4 MB). Everything else in `public/media/` is still generated placeholder.
+
 Finished case studies exist — writeups with accompanying imagery — but none are in
 this repository and no paths are known. Their number, subject matter, and split
 across the three disciplines are unconfirmed.

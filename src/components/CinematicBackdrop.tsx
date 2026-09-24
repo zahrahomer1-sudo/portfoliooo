@@ -20,14 +20,17 @@ import { hero } from "@/content/site";
  * leaves nothing to infer.
  */
 export default function CinematicBackdrop({
-  hasVideo,
+  hasWebm,
+  hasMp4,
   hasPoster,
   children,
 }: {
-  hasVideo: boolean;
+  hasWebm: boolean;
+  hasMp4: boolean;
   hasPoster: boolean;
   children: ReactNode;
 }) {
+  const hasVideo = hasWebm || hasMp4;
   const reduced = useReducedMotion();
   const wrapper = useRef<HTMLDivElement>(null);
   const [range, setRange] = useState<[number, number]>([0, 1]);
@@ -74,17 +77,20 @@ export default function CinematicBackdrop({
           style={reduced ? undefined : { scale }}
         >
           {hasVideo ? (
+            /* No poster while real footage is playing: the only poster in the
+               repo is the generated abstract one, and flashing that before a
+               real frame is a worse first impression than the dark ground.
+               Drop a real frame at hero.poster and re-add it here. */
             <video
               autoPlay
               muted
               loop
               playsInline
               preload="metadata"
-              poster={hasPoster ? hero.poster : undefined}
               className="h-full w-full object-cover"
             >
-              <source src={hero.video} type="video/webm" />
-              <source src={hero.videoMp4} type="video/mp4" />
+              {hasWebm ? <source src={hero.video} type="video/webm" /> : null}
+              {hasMp4 ? <source src={hero.videoMp4} type="video/mp4" /> : null}
             </video>
           ) : hasPoster ? (
             // No footage yet: the poster drifts so the section reads as

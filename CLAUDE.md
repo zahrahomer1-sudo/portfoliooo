@@ -64,9 +64,15 @@ Things that are not obvious from a single file:
   global `useScroll()` instead. If a scroll-linked effect silently does nothing,
   suspect this first.
 - **Placeholder media is generated, not downloaded.** `npm run placeholders`
-  rewrites `public/media/`. The build environment has no egress to stock image
-  hosts and its ffmpeg cannot encode video, so there is no placeholder film —
-  the hero falls back to the drifting poster.
+  rewrites `public/media/` — but it will not overwrite real footage unless you
+  let it: it clears the directory first, so move real files aside before running
+  it. The build environment has no egress to stock image hosts and its ffmpeg
+  cannot encode video, so it produces stills only.
+- **Video cannot be verified in this environment.** Playwright's Chromium is an
+  open-source build with no H.264/AAC decoder, so an MP4 hero fails there with
+  `DEMUXER_ERROR_NO_SUPPORTED_STREAMS` while playing normally in every shipping
+  browser. Check the file is served 200 as `video/mp4` and that `currentSrc`
+  resolves; do not read a decode failure here as a broken file.
 - **The contact form never submits until the review step.** `/api/contact`
   answers `501` when no delivery provider is configured, and the client turns
   that into a prefilled mailto rather than faking success. See `.env.example`.

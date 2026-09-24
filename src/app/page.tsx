@@ -36,7 +36,8 @@ export default function Home() {
 
       <main id="main">
         <CinematicBackdrop
-          hasVideo={mediaExists(hero.video) || mediaExists(hero.videoMp4)}
+          hasWebm={mediaExists(hero.video)}
+          hasMp4={mediaExists(hero.videoMp4)}
           hasPoster={mediaExists(hero.poster)}
         >
           <Hero />
