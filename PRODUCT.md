@@ -56,6 +56,9 @@ Confirmed:
   purely static.
 - Media includes photography and video, so asset weight and loading strategy are
   real constraints on the recruiter's first pass, not polish concerns.
+- Enquiry budgets are quoted in PKR, confirmed by the user. The band edges
+  (50k / 150k / 500k) are a first pass, not a price list — adjust them to where
+  the real decisions fall.
 - Print sales via WhatsApp enquiry. Each album frame opens a dialog with a
   prefilled message to +92 300 277 3339. No cart, no payment, no stock: the
   transaction happens in the conversation.
@@ -72,8 +75,6 @@ Explicitly undecided — do not resolve without asking:
 - Contact form delivery mechanism and spam handling.
 - Print pricing, sizes, editions and shipping. Every album frame currently says
   "print details to be confirmed" because none of it has been established.
-- Enquiry budget bands are written in £. With a Pakistan number on the site this
-  may well be wrong; confirm the currency clients actually quote in.
 
 ## Evidence on Hand
 
