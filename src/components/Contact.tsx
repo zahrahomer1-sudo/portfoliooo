@@ -136,7 +136,7 @@ export default function Contact() {
           ) : (
             <>
               <div className="mb-8 flex items-center gap-4">
-                <span className="label text-paper-25" aria-hidden="true">
+                <span className="label-caps text-paper-25" aria-hidden="true">
                   {String(Math.min(index + 1, total)).padStart(2, "0")} / {total}
                 </span>
                 <div
@@ -198,7 +198,7 @@ export default function Contact() {
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 {index > 0 || reviewing ? (
-                  <button type="button" onClick={back} className="label cursor-pointer border-0 bg-transparent p-0 text-paper-45 underline underline-offset-4">
+                  <button type="button" onClick={back} className="label-caps cursor-pointer border-0 bg-transparent p-0 text-paper-45 underline underline-offset-4">
                     Back
                   </button>
                 ) : null}
@@ -209,7 +209,7 @@ export default function Contact() {
                   disabled={status === "sending"}
                   className="cta cursor-pointer border-0 bg-cherry px-8 py-4 text-white transition-colors duration-300 hover:bg-wine disabled:cursor-wait disabled:opacity-60"
                 >
-                  <span className="label">
+                  <span className="label-caps">
                     {reviewing
                       ? status === "sending"
                         ? "Sending"
@@ -221,7 +221,7 @@ export default function Contact() {
                 </button>
 
                 {!reviewing && step.optional ? (
-                  <button type="button" onClick={advance} className="label cursor-pointer border-0 bg-transparent p-0 text-paper-25 underline underline-offset-4">
+                  <button type="button" onClick={advance} className="label-caps cursor-pointer border-0 bg-transparent p-0 text-paper-25 underline underline-offset-4">
                     Skip
                   </button>
                 ) : null}
@@ -385,7 +385,7 @@ function Review({
       <dl className="mt-8 m-0">
         {contactSteps.map((s, i) => (
           <div key={s.id} className="border-t border-paper-12 py-4">
-            <dt className="label text-paper-25">{s.question}</dt>
+            <dt className="label-caps text-paper-25">{s.question}</dt>
             <dd className="m-0 mt-2 flex items-baseline justify-between gap-6">
               <span className="text-[1rem] leading-relaxed text-paper-70">
                 {answers[s.id]?.trim() || "—"}
@@ -393,7 +393,7 @@ function Review({
               <button
                 type="button"
                 onClick={() => onEdit(i)}
-                className="label shrink-0 cursor-pointer border-0 bg-transparent p-0 text-paper-45 underline underline-offset-4"
+                className="label-caps shrink-0 cursor-pointer border-0 bg-transparent p-0 text-paper-45 underline underline-offset-4"
               >
                 Edit
               </button>
@@ -425,7 +425,7 @@ function Resolved({
           href={action.href}
           className="cta mt-8 inline-block bg-cherry px-8 py-4 text-white no-underline transition-colors duration-300 hover:bg-wine"
         >
-          <span className="label">{action.label}</span>
+          <span className="label-caps">{action.label}</span>
         </a>
       ) : null}
     </div>

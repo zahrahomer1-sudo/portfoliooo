@@ -19,6 +19,10 @@ const interTight = Inter_Tight({
   variable: "--font-inter-tight",
 });
 
+/* Variable across both weight and width — a single file covering the range, and
+   `axes` cannot be combined with a fixed weight list. Weight is held down to 400
+   in the .display utility; the heavier end is what read as hard. */
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {

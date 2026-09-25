@@ -99,7 +99,7 @@ export default function Preloader() {
             onClick={dismiss}
             className="absolute right-5 top-5 z-10 cursor-pointer border-0 bg-transparent p-2 text-[#0b0a0a] sm:right-8 sm:top-8"
           >
-            <span className="label">Skip</span>
+            <span className="label-caps">Skip</span>
           </button>
 
           <p className="shell display text-[clamp(1.75rem,6vw,4.5rem)] text-[#0b0a0a]">

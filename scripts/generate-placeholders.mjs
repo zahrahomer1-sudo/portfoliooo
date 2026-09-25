@@ -212,7 +212,6 @@ const stills = [
   ["album-03.png", 900, 900, 93, 1.12, 0],
   ["album-04.png", 1000, 1250, 104, 0.98, 0],
   ["album-05.png", 1200, 675, 115, 1.08, 0.22],
-  ["album-06.png", 900, 1125, 126, 1.0, 0],
 ];
 
 for (const [name, w, h, seed, contrast, tint] of stills) {

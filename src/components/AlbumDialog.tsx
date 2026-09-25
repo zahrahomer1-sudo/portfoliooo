@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { album, site, type AlbumImage } from "@/content/site";
+import { BackgroundGradient } from "./ui/background-gradient";
 
 /** Prefilled WhatsApp enquiry. wa.me wants digits only and a URI-encoded body. */
 function printEnquiry(image: AlbumImage) {
@@ -87,15 +88,19 @@ export default function AlbumDialog({
           />
 
           <motion.div
-            ref={panel}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="album-dialog-title"
-            className="glass-strong relative grid max-h-[90svh] w-full max-w-5xl grid-cols-1 overflow-y-auto md:grid-cols-[1.2fr_1fr]"
             initial={reduced ? undefined : { opacity: 0, y: 24, scale: 0.98 }}
             animate={reduced ? undefined : { opacity: 1, y: 0, scale: 1 }}
             exit={reduced ? undefined : { opacity: 0, y: 16, scale: 0.99 }}
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="relative w-full max-w-5xl"
+          >
+          <BackgroundGradient>
+          <div
+            ref={panel}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="album-dialog-title"
+            className="grid max-h-[88svh] w-full grid-cols-1 overflow-y-auto md:grid-cols-[1.2fr_1fr]"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -106,12 +111,12 @@ export default function AlbumDialog({
 
             <div className="flex flex-col gap-5 p-6 sm:p-8">
               <div className="flex items-start justify-between gap-4">
-                <span className="label text-cherry-soft">{album.title}</span>
+                <span className="label-caps text-cherry-soft">{album.title}</span>
                 <button
                   ref={closer}
                   type="button"
                   onClick={onClose}
-                  className="label -mr-2 -mt-2 cursor-pointer border-0 bg-transparent p-2 text-paper-45 transition-colors hover:text-paper"
+                  className="label-caps -mr-2 -mt-2 cursor-pointer border-0 bg-transparent p-2 text-paper-45 transition-colors hover:text-paper"
                 >
                   Close
                 </button>
@@ -128,7 +133,7 @@ export default function AlbumDialog({
                 {image.description}
               </p>
 
-              <p className="label text-paper-45">{image.edition}</p>
+              <p className="label-caps text-paper-45">{image.edition}</p>
 
               <div className="mt-auto flex flex-col gap-3 pt-2">
                 <a
@@ -150,6 +155,8 @@ export default function AlbumDialog({
                 </p>
               </div>
             </div>
+          </div>
+          </BackgroundGradient>
           </motion.div>
         </motion.div>
       ) : null}

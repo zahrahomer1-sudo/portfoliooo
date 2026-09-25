@@ -3,6 +3,7 @@ import Preloader from "@/components/Preloader";
 import FloatingNav from "@/components/FloatingNav";
 import Cursor from "@/components/Cursor";
 import Hero from "@/components/Hero";
+import Stats from "@/components/Stats";
 import About from "@/components/About";
 import Album from "@/components/Album";
 import Work from "@/components/Work";
@@ -15,10 +16,10 @@ import { album, hero, projects, site } from "@/content/site";
 import { mediaExists } from "@/lib/media";
 
 const navItems = [
+  { name: "About", link: "#about" },
   { name: "Album", link: "#album" },
   { name: "Work", link: "#work" },
   { name: "Services", link: "#services" },
-  { name: "Studio", link: "#studio" },
 ];
 
 export default function Home() {
@@ -41,6 +42,7 @@ export default function Home() {
           hasPoster={mediaExists(hero.poster)}
         >
           <Hero />
+          <Stats />
           <About />
         </CinematicBackdrop>
 

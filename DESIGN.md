@@ -53,6 +53,17 @@ an unreadable panel is worse than an un-glassy one.
 
 `.glass` for surfaces over the film, `.glass-strong` for the album dialog.
 
+## Navigation
+
+Sticky and always present. It grew from a reveal-on-scroll-up component, but a
+nav you have to scroll up to summon is a nav people cannot find. It uses
+`.glass-nav`, which is denser than `.glass`: the bar crosses the hero's huge
+white headline, and a 5% white film over that leaves the labels invisible.
+
+Anchor clicks are eased by Lenis from `SmoothScroll`, which intercepts every
+`a[href^="#"]` once at the root. A native hash jump is instant and fights the
+smoothing.
+
 ## Shape
 
 **Rounded CTAs, sharp everything else.** Buttons and the floating nav are fully
@@ -61,9 +72,16 @@ that keeps it from looking like every other glass template.
 
 ## Type
 
-Archivo for display — a grotesque with a real width axis, set at 112% so the
-headline stretches rather than merely thickening. Inter Tight for everything
-else. Display sits at `line-height: 0.88`, `letter-spacing: -0.035em`.
+Archivo for display, Inter Tight for everything else.
+
+Softened deliberately: display weight 400 (not 500), tracking −0.018em (not
+−0.035em), line-height 0.98 (not 0.88), width 104% (not 112%). Body sits at
+weight 380, line-height 1.65. The earlier setting was poster typography — tight,
+heavy, correct on a billboard and hard on a page you actually read.
+
+Labels are sentence case by default (`.label`). `.label-caps` still exists for
+the few places wide-tracked uppercase earns itself — frame indices, metadata —
+but caps everywhere was a large part of what made the page feel severe.
 
 The hero headline uses `mix-blend-mode: difference` so it inverts against the
 film: dark over highlights, light over shadow, legible through a moving frame
@@ -73,6 +91,16 @@ against that instead of against the film. The entrance animates inner spans for
 exactly this reason.
 
 ## Album
+
+Five frames, then a way onward. A film holds the full height of the section
+behind everything and the title is pinned at its centre, so both stay put while
+the frames travel past — one continuous move rather than a header followed by a
+grid. The film clears as the first frames arrive; the title releases only after
+the last one. The title is blended so it survives both bright frames and bare
+ground passing underneath.
+
+Frame captions live inside the image, top-left, not below it: a caption below
+passes straight through the pinned title on its way up the screen.
 
 One scrolling visual story, not a gallery. Frames sit in a loose three-column
 rhythm and travel at different speeds (`depth` per frame, 1 = moves with the

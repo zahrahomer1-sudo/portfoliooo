@@ -1,18 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Adapted from the Aceternity floating navbar: the mechanic is theirs — hide at
- * the top of the page, reveal on upward scroll — restyled onto this site's
- * glass and palette. The demo's Login button and Tabler icon set are dropped;
- * neither belongs on a portfolio.
+ * Sticky glass nav — always present, never hiding on scroll direction.
  *
- * Two corrections to the original: the previous scroll value is read defensively
- * rather than with a non-null assertion, and the bar is made `inert` while
- * hidden so keyboard users cannot tab into links that are off-screen.
+ * It grew from the Aceternity floating navbar, but the reveal-on-scroll-up
+ * mechanic is gone: a nav you have to scroll up to summon is a nav people
+ * cannot find. What remains is the glass pill, which only gains its background
+ * once the page has moved, so it does not sit as a bar across the opening frame.
+ *
+ * The active section is tracked so the current place is marked. Anchor clicks
+ * are eased by SmoothScroll, not handled here.
  */
 export default function FloatingNav({
   items,
@@ -21,56 +21,82 @@ export default function FloatingNav({
   items: { name: string; link: string }[];
   className?: string;
 }) {
-  const { scrollYProgress } = useScroll();
-  const [visible, setVisible] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
 
-  useMotionValueEvent(scrollYProgress, "change", (current) => {
-    if (typeof current !== "number") return;
-    const previous = scrollYProgress.getPrevious();
-    if (current < 0.04) {
-      setVisible(false);
-      return;
-    }
-    if (previous === undefined) return;
-    setVisible(current - previous < 0);
-  });
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    const sections = items
+      .map((i) => document.getElementById(i.link.slice(1)))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    // Bias the band to the upper middle of the viewport so the section you are
+    // reading is the one marked, not the one just entering from below.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(`#${visible.target.id}`);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5] },
+    );
+    sections.forEach((s) => observer.observe(s));
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
+  }, [items]);
 
   return (
-    <AnimatePresence>
-      {visible ? (
-        <motion.nav
-          aria-label="Primary"
-          initial={{ opacity: 0, y: -90 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -90 }}
-          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          className={cn(
-            "fixed inset-x-0 top-5 z-40 mx-auto flex max-w-fit items-center justify-center sm:top-7",
-            className,
-          )}
-        >
-          <div className="glass cta flex items-center gap-1 p-1.5">
-            {items.map((item) => (
-              <a
-                key={item.link}
-                href={item.link}
-                className="cta px-4 py-2.5 text-[0.8125rem] font-medium text-paper-70 no-underline transition-colors duration-300 hover:bg-white/8 hover:text-paper"
-              >
-                {item.name}
-              </a>
-            ))}
-
-            <span aria-hidden="true" className="mx-1 h-5 w-px bg-paper-12" />
-
+    <nav
+      aria-label="Primary"
+      className={cn(
+        "fixed inset-x-0 top-4 z-40 mx-auto flex max-w-fit items-center justify-center px-4 sm:top-6",
+        className,
+      )}
+    >
+      <div
+        className={cn(
+          "cta flex items-center gap-0.5 p-1.5 transition-opacity duration-700 ease-[var(--ease-out-expo)]",
+          scrolled ? "glass-nav" : "glass-nav opacity-90",
+        )}
+      >
+        {items.map((item) => {
+          const current = active === item.link;
+          return (
             <a
-              href="#contact"
-              className="cta bg-cherry px-4 py-2.5 text-[0.8125rem] font-medium text-white no-underline transition-colors duration-300 hover:bg-wine"
+              key={item.link}
+              href={item.link}
+              aria-current={current ? "true" : undefined}
+              className={cn(
+                "cta relative px-3.5 py-2.5 text-[0.8125rem] no-underline transition-colors duration-300 sm:px-4",
+                current ? "text-paper" : "text-paper-45 hover:text-paper",
+              )}
             >
-              Get in touch
+              {item.name}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "absolute inset-x-3.5 bottom-1.5 h-px origin-left bg-cherry-soft transition-transform duration-500 ease-[var(--ease-out-expo)]",
+                  current ? "scale-x-100" : "scale-x-0",
+                )}
+              />
             </a>
-          </div>
-        </motion.nav>
-      ) : null}
-    </AnimatePresence>
+          );
+        })}
+
+        <a
+          href="#contact"
+          className="cta ml-1 bg-cherry px-4 py-2.5 text-[0.8125rem] text-white no-underline transition-colors duration-300 hover:bg-wine"
+        >
+          Get in touch
+        </a>
+      </div>
+    </nav>
   );
 }

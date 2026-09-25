@@ -70,7 +70,7 @@ export default function Cursor() {
         }`}
       >
         <span
-          className={`label text-white transition-opacity duration-300 ${
+          className={`label-caps text-white transition-opacity duration-300 ${
             label ? "opacity-100" : "opacity-0"
           }`}
         >

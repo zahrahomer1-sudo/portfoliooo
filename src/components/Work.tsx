@@ -114,7 +114,7 @@ function WorkItem({
             <h3 className="display text-[clamp(1.5rem,3vw,2.25rem)]">
               {project.title}
             </h3>
-            <span className="label text-paper-45">
+            <span className="label-caps text-paper-45">
               {project.discipline} · {project.year}
             </span>
             <p className="measure basis-full text-[0.9375rem] leading-relaxed text-paper-45">

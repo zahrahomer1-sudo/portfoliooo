@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { album, type AlbumImage } from "@/content/site";
 import AlbumDialog from "./AlbumDialog";
+import { useScrollRange } from "./primitives/useScrollRange";
 
 const column: Record<AlbumImage["column"], string> = {
   left: "col-span-12 md:col-span-7 md:col-start-1",
@@ -12,41 +13,121 @@ const column: Record<AlbumImage["column"], string> = {
 };
 
 /**
- * The album: one scrolling visual story rather than a gallery grid.
+ * The album.
  *
- * Frames sit in a loose three-column rhythm and travel at different speeds, so
- * the section reveals itself the way a room does. Each one opens a dialog with
- * the frame's story and the print enquiry.
+ * A film holds the full height of the section behind everything, and the title
+ * sits pinned at its centre — both stay put while the frames travel past, so
+ * the whole thing reads as one continuous move rather than a header followed by
+ * a grid. The film fades as the first frames arrive, which is the transition
+ * from the opening shot into the album proper; the title only releases once the
+ * last frame has gone by.
+ *
+ * The title is set in blend mode so it stays legible whether a bright frame or
+ * bare ground is passing underneath it.
  */
 export default function Album() {
   const [open, setOpen] = useState<AlbumImage | null>(null);
+  const [hasFilm, setHasFilm] = useState(true);
+  const reduced = useReducedMotion();
+
+  const section = useRef<HTMLElement>(null);
+  const { scrollY } = useScroll();
+
+  // Film holds through the opening viewport, then clears as the frames arrive.
+  const filmRange = useScrollRange(section, 0.06, 0.34);
+  const filmOpacity = useTransform(scrollY, filmRange, [1, 0]);
+  const filmScale = useTransform(scrollY, filmRange, [1, 1.14]);
+
+  // Title drifts slowly across the whole section, then leaves at the very end.
+  const titleRange = useScrollRange(section, 0, 1);
+  const titleY = useTransform(scrollY, titleRange, [70, -70]);
+  const titleFade = useTransform(scrollY, titleRange, [1, 1, 0]);
+  const titleScale = useTransform(scrollY, titleRange, [1.04, 0.94]);
 
   return (
     <section
       id="album"
+      ref={section}
       aria-labelledby="album-heading"
       data-cursor-zone
-      className="cursor-none-fine relative py-28 sm:py-40"
+      className="cursor-none-fine relative"
     >
-      <div className="shell">
-        <header className="mb-20 grid grid-cols-12 gap-y-6 sm:mb-28">
-          <h2
-            id="album-heading"
-            className="display col-span-12 text-[clamp(2.5rem,8vw,6.5rem)] lg:col-span-7"
-          >
-            {album.title}
-          </h2>
-          <p className="measure col-span-12 self-end text-[1rem] leading-relaxed text-paper-45 lg:col-span-4 lg:col-start-9">
-            {album.standfirst}
-          </p>
-        </header>
+      {/* Film. Sticky and pulled back out of flow so it adds no height. */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none sticky top-0 -mb-[100svh] h-svh overflow-hidden"
+        style={reduced ? undefined : { opacity: filmOpacity }}
+      >
+        <motion.div
+          className="absolute inset-0"
+          style={reduced ? undefined : { scale: filmScale }}
+        >
+          {hasFilm ? (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              onError={() => setHasFilm(false)}
+              className="h-full w-full object-cover"
+            >
+              <source src={album.video} type="video/webm" />
+              <source src={album.videoMp4} type="video/mp4" />
+            </video>
+          ) : (
+            // No album footage yet: hold the first frame instead of an empty box.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={album.images[0].src}
+              alt=""
+              className="h-full w-full scale-110 object-cover opacity-60 blur-sm"
+            />
+          )}
+        </motion.div>
+        <div className="absolute inset-0 bg-ink/45" />
+        <div className="grain absolute inset-0" />
+      </motion.div>
 
+      {/* Pinned title. Above the frames, blended so it survives both. */}
+      <motion.div
+        className="pointer-events-none sticky top-0 z-20 -mb-[100svh] flex h-svh flex-col items-center justify-center px-6 text-center mix-blend-difference"
+        style={reduced ? undefined : { opacity: titleFade }}
+      >
+        <motion.h2
+          id="album-heading"
+          className="display display-tight max-w-[16ch] text-[clamp(2.5rem,9vw,7rem)] text-white"
+          style={reduced ? undefined : { y: titleY, scale: titleScale }}
+        >
+          {album.title}
+        </motion.h2>
+        <motion.p
+          className="mt-6 max-w-[46ch] text-[0.9375rem] leading-relaxed text-white/75"
+          style={reduced ? undefined : { y: titleY }}
+        >
+          {album.standfirst}
+        </motion.p>
+      </motion.div>
+
+      {/* Opening viewport: film and title alone. */}
+      <div className="h-svh" aria-hidden="true" />
+
+      <div className="shell relative z-10 pb-28 pt-[20svh] sm:pb-40">
         <div className="grid grid-cols-12 gap-x-6 gap-y-24 sm:gap-y-40">
           {album.images.map((image, i) => (
             <div key={image.id} className={column[image.column]}>
               <Frame image={image} index={i} onOpen={setOpen} />
             </div>
           ))}
+        </div>
+
+        <div className="mt-24 flex justify-center sm:mt-32">
+          <a
+            href={album.viewMore.href}
+            className="cta glass px-8 py-4 text-[0.9375rem] text-paper no-underline transition-colors duration-500 hover:bg-white/12"
+          >
+            {album.viewMore.label}
+          </a>
         </div>
       </div>
 
@@ -73,15 +154,14 @@ function Frame({
     offset: ["start end", "end start"],
   });
 
-  // depth 1 travels with the page; below drifts slower, above overtakes it.
-  const drift = (image.depth - 1) * 140;
+  const drift = (image.depth - 1) * 150;
   const y = useTransform(scrollYProgress, [0, 1], [drift, -drift]);
 
   function track(e: React.MouseEvent<HTMLButtonElement>) {
     if (reduced || !ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
-    // Deliberately shallow. A photograph rotated in perspective is a distorted
-    // photograph; this is only enough to suggest the surface has depth.
+    // Shallow on purpose: a photograph rotated in perspective is a distorted
+    // photograph, and the photograph is the thing being sold.
     setTilt({
       x: -((e.clientY - top - height / 2) / height) * 3,
       y: ((e.clientX - left - width / 2) / width) * 3,
@@ -120,16 +200,18 @@ function Frame({
             className="h-full w-full object-cover transition-transform duration-[1400ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
           />
           <div className="pointer-events-none absolute inset-0 bg-ink/25 opacity-0 transition-opacity duration-700 group-hover:opacity-100 group-focus-visible:opacity-100" />
-        </motion.figure>
 
-        <figcaption className="mt-4 flex items-baseline justify-between gap-4">
-          <span className="display text-[1.125rem] tracking-tight">
-            {image.title}
-          </span>
-          <span className="label nums text-paper-25">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </figcaption>
+          {/* Index sits inside the frame. A caption below it would pass
+              straight through the pinned title on the way up. */}
+          <figcaption className="absolute left-4 top-4 flex items-center gap-3">
+            <span className="label-caps nums text-white/55">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span className="text-[0.8125rem] text-white/0 transition-colors duration-500 group-hover:text-white/80 group-focus-visible:text-white/80">
+              {image.title}
+            </span>
+          </figcaption>
+        </motion.figure>
       </button>
     </motion.div>
   );

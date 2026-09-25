@@ -19,7 +19,7 @@ export default function Process() {
         {process.map((step, i) => (
           <li key={step.title} className="col-span-12 sm:col-span-6 lg:col-span-3">
             <Reveal delay={i * 0.06}>
-              <span className="label block text-cherry-soft">
+              <span className="label-caps block text-cherry-soft">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <h3 className="display mt-4 text-[clamp(1.5rem,3vw,2rem)]">
