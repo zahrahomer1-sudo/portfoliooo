@@ -100,10 +100,10 @@ export default function Contact() {
   }
 
   const mailto = `mailto:${site.email}?subject=${encodeURIComponent(
-    `Project enquiry — ${answers.name ?? ""}`,
+    `Project enquiry: ${answers.name ?? ""}`,
   )}&body=${encodeURIComponent(
     contactSteps
-      .map((s) => `${s.question}\n${answers[s.id] ?? "—"}`)
+      .map((s) => `${s.question}\n${answers[s.id] || "Not given"}`)
       .join("\n\n"),
   )}`;
 
@@ -129,7 +129,7 @@ export default function Contact() {
             />
           ) : status === "unconfigured" ? (
             <Resolved
-              title="Nearly — delivery is not wired up yet."
+              title="Nearly. Delivery is not wired up yet."
               body="This site has no mail service connected, so nothing was sent. Your answers are ready in an email instead."
               action={{ href: mailto, label: "Open the prefilled email" }}
             />
@@ -140,7 +140,7 @@ export default function Contact() {
                   {String(Math.min(index + 1, total)).padStart(2, "0")} / {total}
                 </span>
                 <div
-                  className="h-px flex-1 bg-ink-raised-12"
+                  className="h-px flex-1 bg-paper-12"
                   role="progressbar"
                   aria-valuemin={1}
                   aria-valuemax={total}
@@ -388,7 +388,7 @@ function Review({
             <dt className="label-caps text-paper-25">{s.question}</dt>
             <dd className="m-0 mt-2 flex items-baseline justify-between gap-6">
               <span className="text-[1rem] leading-relaxed text-paper-70">
-                {answers[s.id]?.trim() || "—"}
+                {answers[s.id]?.trim() || "Not given"}
               </span>
               <button
                 type="button"

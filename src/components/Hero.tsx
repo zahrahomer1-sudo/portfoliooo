@@ -4,13 +4,12 @@ import { motion, useReducedMotion } from "motion/react";
 import { hero, site } from "@/content/site";
 
 /**
- * The headline blends with the film behind it rather than sitting on a plate:
- * `mix-blend-mode: difference` inverts it against whatever is underneath, so it
- * goes dark over highlights and light over shadow and stays legible through a
- * moving frame. No ancestor may carry a transform, filter or opacity — any of
- * those would open a new stacking context and the text would blend against that
- * instead of against the film. The entrance animates inner spans for exactly
- * that reason.
+ * The headline is glass: the film shows through the letterforms, held together
+ * by a brighter stroke at their edges. See `.glass-type` in globals.css.
+ *
+ * It previously used `mix-blend-mode: difference`, which inverted the type
+ * against the footage but was never actually see through. Nothing is blended
+ * now, so the old constraint about ancestor transforms no longer applies.
  */
 export default function Hero() {
   const reduced = useReducedMotion();
@@ -32,7 +31,7 @@ export default function Hero() {
       </div>
 
       <div className="shell">
-        <h1 className="display mix-blend-difference text-[clamp(2.75rem,10.5vw,9rem)] text-white">
+        <h1 className="display glass-type text-[clamp(2.75rem,10.5vw,9rem)]">
           {hero.headline.map((line, i) => (
             <span key={line} className="block overflow-hidden pb-[0.06em]">
               <motion.span

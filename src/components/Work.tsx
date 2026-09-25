@@ -104,8 +104,8 @@ function WorkItem({
             preview={project.preview}
             hasImage={Boolean(project.image && available[project.image])}
             hasPreview={Boolean(project.preview && available[project.preview])}
-            alt={`${project.title} — ${project.discipline}`}
-            label={`${project.discipline} — ${project.title}`}
+            alt={`${project.title}, ${project.discipline}`}
+            label={`${project.discipline}: ${project.title}`}
             ratio={ratios[scale]}
             active={active}
           />
@@ -115,7 +115,8 @@ function WorkItem({
               {project.title}
             </h3>
             <span className="label-caps text-paper-45">
-              {project.discipline} · {project.year}
+              {project.discipline}
+              {project.year ? ` · ${project.year}` : null}
             </span>
             <p className="measure basis-full text-[0.9375rem] leading-relaxed text-paper-45">
               {project.summary}

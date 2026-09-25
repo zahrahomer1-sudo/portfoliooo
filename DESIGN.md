@@ -83,12 +83,14 @@ Labels are sentence case by default (`.label`). `.label-caps` still exists for
 the few places wide-tracked uppercase earns itself — frame indices, metadata —
 but caps everywhere was a large part of what made the page feel severe.
 
-The hero headline uses `mix-blend-mode: difference` so it inverts against the
-film: dark over highlights, light over shadow, legible through a moving frame
-without a scrim. **No ancestor of that heading may carry a transform, filter or
-opacity** — any of those opens a new stacking context and the text blends
-against that instead of against the film. The entrance animates inner spans for
-exactly this reason.
+The hero headline is glass (`.glass-type`): a 20% white fill with a 68% white
+stroke at its edge, so the film genuinely shows through each letterform and the
+stroke keeps the shape readable. It replaced a `mix-blend-mode: difference`
+treatment, which inverted the type against the footage but let nothing through
+it.
+
+No dashes anywhere in the copy. Sentences that wanted an em dash are split into
+two, or take a comma.
 
 ## Album
 
@@ -122,6 +124,19 @@ All of it off under `prefers-reduced-motion`, including Lenis and including the
 film's drift — and under reduced motion the film is contained to its wrapper
 rather than fixed, because a backdrop that never fades would otherwise sit
 behind every section on the site.
+
+## Preloading
+
+The hero film is preloaded with the document (`<link rel="preload" as="video">`
+plus `preload="auto"`), because it is the first thing anyone sees. The album
+film is deliberately not: it is warmed by an IntersectionObserver a full
+viewport before the section arrives, so it is ready on time without putting
+several megabytes in front of the first paint. Album photographs go through
+next/image, which serves AVIF or WebP at the size actually needed and preloads
+the first frame.
+
+Source media is compressed at rest by `npm run optimize` (sharp, long edge
+capped at 2400px). Videos are not compressed: no H.264 decoder here.
 
 ## Refusals
 

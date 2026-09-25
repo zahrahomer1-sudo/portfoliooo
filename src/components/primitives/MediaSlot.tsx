@@ -52,7 +52,7 @@ export default function MediaSlot({
 
   return (
     <div
-      className={`relative overflow-hidden bg-ink-raised-raised ${className}`}
+      className={`relative overflow-hidden bg-ink-raised ${className}`}
       style={{ aspectRatio: ratio }}
     >
       {!imageFailed && image ? (
@@ -92,7 +92,7 @@ export default function MediaSlot({
 
 function Placeholder({ label }: { label: string }) {
   return (
-    <div className="grain absolute inset-0 flex items-end justify-between gap-4 bg-ink-raised-raised p-4 sm:p-6">
+    <div className="grain absolute inset-0 flex items-end justify-between gap-4 bg-ink-raised p-4 sm:p-6">
       <span className="label-caps text-paper-45">{label}</span>
       <span className="label-caps text-paper-25">Awaiting asset</span>
     </div>

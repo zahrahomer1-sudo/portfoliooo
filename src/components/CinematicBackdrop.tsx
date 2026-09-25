@@ -86,7 +86,7 @@ export default function CinematicBackdrop({
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="auto"
               className="h-full w-full object-cover"
             >
               {hasWebm ? <source src={hero.video} type="video/webm" /> : null}

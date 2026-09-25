@@ -26,14 +26,14 @@ const interTight = Inter_Tight({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — ${site.role}`,
-    template: `%s — ${site.name}`,
+    default: `${site.name}, ${site.role}`,
+    template: `%s · ${site.name}`,
   },
   description:
     "Independent creative direction across photography, film, brand identity and web. Selected work, albums and prints.",
   openGraph: {
     type: "website",
-    title: `${site.name} — ${site.role}`,
+    title: `${site.name}, ${site.role}`,
     description:
       "Independent creative direction across photography, film, brand identity and web.",
     siteName: site.name,
@@ -55,6 +55,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${archivo.variable} ${interTight.variable}`}>
       <head>
+        {/* The hero film is the first thing anyone sees, so it is fetched
+            alongside the document rather than discovered after hydration.
+            The album film is deliberately NOT here: it is warmed when the
+            visitor gets close, so it never competes with this one. */}
+        <link rel="preload" as="video" href="/media/hero.mp4" type="video/mp4" />
         {/* Reveal animations render their start state into the server HTML.
             Without JS that state never advances, so the page would be there
             but invisible. This hands the content straight over instead. */}

@@ -46,7 +46,12 @@ export default function Home() {
           <About />
         </CinematicBackdrop>
 
-        <Album />
+        <Album
+          film={{
+            webm: mediaExists(album.video),
+            mp4: mediaExists(album.videoMp4),
+          }}
+        />
         <Work available={available} />
         <Services />
         <Studio />

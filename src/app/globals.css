@@ -242,6 +242,37 @@
     }
   }
 
+  /**
+   * Glass lettering.
+   *
+   * The film actually shows through the letterforms: the fill is mostly
+   * transparent and a brighter stroke draws the edge, so each character reads
+   * as a pane of glass laid over the footage rather than as paint on top of it.
+   *
+   * This replaces a `mix-blend-mode: difference` treatment, which inverted the
+   * type against the video but never let anything through it.
+   */
+  .glass-type {
+    color: rgb(255 255 255 / 0.2);
+    -webkit-text-stroke: 1.2px rgb(255 255 255 / 0.68);
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.12),
+      0 18px 60px rgb(0 0 0 / 0.45);
+  }
+
+  @media (min-width: 640px) {
+    .glass-type {
+      -webkit-text-stroke-width: 1.75px;
+    }
+  }
+
+  /* Without text-stroke the fill alone would be a ghost, so give it back. */
+  @supports not (-webkit-text-stroke: 1px white) {
+    .glass-type {
+      color: rgb(255 255 255 / 0.82);
+    }
+  }
+
   /* Rounded CTAs, sharp everything else. */
   .cta {
     border-radius: 999px;

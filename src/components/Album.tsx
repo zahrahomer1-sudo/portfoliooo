@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { album, type AlbumImage } from "@/content/site";
 import AlbumDialog from "./AlbumDialog";
@@ -25,12 +26,18 @@ const column: Record<AlbumImage["column"], string> = {
  * The title is set in blend mode so it stays legible whether a bright frame or
  * bare ground is passing underneath it.
  */
-export default function Album() {
+export default function Album({
+  film: available,
+}: {
+  /** Which album film formats exist on disk, resolved by the server. */
+  film: { webm: boolean; mp4: boolean };
+}) {
   const [open, setOpen] = useState<AlbumImage | null>(null);
-  const [hasFilm, setHasFilm] = useState(true);
+  const [hasFilm, setHasFilm] = useState(available.webm || available.mp4);
   const reduced = useReducedMotion();
 
   const section = useRef<HTMLElement>(null);
+  const film = useRef<HTMLVideoElement>(null);
   const { scrollY } = useScroll();
 
   // Film holds through the opening viewport, then clears as the frames arrive.
@@ -43,6 +50,32 @@ export default function Album() {
   const titleY = useTransform(scrollY, titleRange, [70, -70]);
   const titleFade = useTransform(scrollY, titleRange, [1, 1, 0]);
   const titleScale = useTransform(scrollY, titleRange, [1.04, 0.94]);
+
+  /**
+   * Warm the album film once the visitor is roughly a screen away.
+   *
+   * Fetching it at page load would put several megabytes in front of the first
+   * paint for a section most people have not reached yet, which is the opposite
+   * of preloading well. Starting a screen early means it is ready by the time
+   * the section arrives without ever competing with the hero.
+   */
+  useEffect(() => {
+    const el = section.current;
+    const video = film.current;
+    if (!el || !video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        video.preload = "auto";
+        video.load();
+      },
+      { rootMargin: "100% 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section
@@ -64,6 +97,7 @@ export default function Album() {
         >
           {hasFilm ? (
             <video
+              ref={film}
               autoPlay
               muted
               loop
@@ -72,16 +106,21 @@ export default function Album() {
               onError={() => setHasFilm(false)}
               className="h-full w-full object-cover"
             >
-              <source src={album.video} type="video/webm" />
-              <source src={album.videoMp4} type="video/mp4" />
+              {available.webm ? (
+                <source src={album.video} type="video/webm" />
+              ) : null}
+              {available.mp4 ? (
+                <source src={album.videoMp4} type="video/mp4" />
+              ) : null}
             </video>
           ) : (
             // No album footage yet: hold the first frame instead of an empty box.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={album.images[0].src}
               alt=""
-              className="h-full w-full scale-110 object-cover opacity-60 blur-sm"
+              fill
+              sizes="100vw"
+              className="scale-110 object-cover opacity-60 blur-sm"
             />
           )}
         </motion.div>
@@ -177,7 +216,7 @@ function Frame({
         onMouseMove={track}
         onMouseLeave={() => setTilt({ x: 0, y: 0 })}
         onClick={() => onOpen(image)}
-        aria-label={`${image.title} — open frame and print details`}
+        aria-label={`${image.title}, open frame and print details`}
         className="group block w-full cursor-none border-0 bg-transparent p-0 text-left"
         style={{ perspective: "1200px" }}
       >
@@ -191,12 +230,15 @@ function Frame({
           }}
           transition={{ type: "spring", stiffness: 140, damping: 18 }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          {/* next/image, not a bare img: these are multi-megabyte camera files
+              and the optimizer serves AVIF or WebP at the size actually needed. */}
+          <Image
             src={image.src}
             alt={image.alt}
-            loading={index < 2 ? "eager" : "lazy"}
-            decoding="async"
+            width={image.width}
+            height={image.height}
+            priority={index === 0}
+            sizes="(max-width: 768px) 100vw, 55vw"
             className="h-full w-full object-cover transition-transform duration-[1400ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
           />
           <div className="pointer-events-none absolute inset-0 bg-ink/25 opacity-0 transition-opacity duration-700 group-hover:opacity-100 group-focus-visible:opacity-100" />

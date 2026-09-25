@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { album, site, type AlbumImage } from "@/content/site";
@@ -7,7 +8,7 @@ import { BackgroundGradient } from "./ui/background-gradient";
 
 /** Prefilled WhatsApp enquiry. wa.me wants digits only and a URI-encoded body. */
 function printEnquiry(image: AlbumImage) {
-  const text = `Hi Zahrah — I'd like to buy a print of "${image.title}" from ${album.title}. Could you send me sizes and pricing?`;
+  const text = `Hi Zahrah, I would like to buy a print of "${image.title}" from ${album.title}. Could you send me sizes and pricing?`;
   return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 }
 
@@ -102,10 +103,12 @@ export default function AlbumDialog({
             aria-labelledby="album-dialog-title"
             className="grid max-h-[88svh] w-full grid-cols-1 overflow-y-auto md:grid-cols-[1.2fr_1fr]"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={image.src}
               alt={image.alt}
+              width={image.width}
+              height={image.height}
+              sizes="(max-width: 768px) 100vw, 60vw"
               className="h-full max-h-[50svh] w-full object-cover md:max-h-none"
             />
 
@@ -145,7 +148,7 @@ export default function AlbumDialog({
                   Buy this print on WhatsApp
                 </a>
                 <a
-                  href={`mailto:${site.email}?subject=${encodeURIComponent(`Print enquiry — ${image.title}`)}`}
+                  href={`mailto:${site.email}?subject=${encodeURIComponent(`Print enquiry: ${image.title}`)}`}
                   className="cta border border-paper-25 px-6 py-4 text-center text-[0.9375rem] text-paper-70 no-underline transition-colors duration-300 hover:border-paper hover:text-paper"
                 >
                   Or email instead
